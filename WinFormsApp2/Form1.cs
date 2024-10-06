@@ -4,6 +4,7 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
 namespace WinFormsApp2
@@ -15,7 +16,8 @@ namespace WinFormsApp2
         Button btn;
         Label lbl;
         PictureBox pBox;
-        CheckBox chk;
+        CheckBox chk1, chk2;
+        private int pictureIndex = 0;
         public StartVorm()
         {
             this.Height = 500;
@@ -28,7 +30,7 @@ namespace WinFormsApp2
             tn.Nodes.Add(new TreeNode("Nupp"));
             tn.Nodes.Add(new TreeNode("Silt"));
             tn.Nodes.Add(new TreeNode("Pilt"));
-            tn.Nodes.Add(new TreeNode("Märkiruut"));
+            tn.Nodes.Add(new TreeNode("Markiruut"));
             
             
             //tn.Nodes.Add(new TreeNode(Silt));
@@ -51,21 +53,30 @@ namespace WinFormsApp2
             lbl.Location = new Point(150, 0);
 
             pBox = new PictureBox();
-            pBox.Size = new Size(60, 60);
-            pBox.Location = new Point(150, btn.Height + btn.Width + 5);
-            pBox.SizeMode = PictureBoxSizeMode.AutoSize;
+            pBox.Size = new Size(200, 200);
+            pBox.Location = new Point(200, 150);
+            pBox.SizeMode = PictureBoxSizeMode.Zoom;
             pBox.Image = Image.FromFile(@"..\..\..\esimene.jpg");
             pBox.DoubleClick += Pbox_DoubleClick;
+
+
+            chk1 = new CheckBox();
+            chk1.Text = "esimene vaade";
+            chk1.Location = new Point(450, 200);
+            chk1.CheckedChanged += Chk_CheckedChanged;
+
+            chk2 = new CheckBox();
+            chk2.Text = "teine vaade";
+            chk2.Location = new Point(450, 230);
+            chk2.CheckedChanged += Chk_CheckedChanged;
         }
         int t = 0;
-        int tt = 0;
+            
         private void Pbox_DoubleClick(object? sender, EventArgs e)
         {
-            string[] pildid = { "esimene.png", "teine.png", "kolmas.png" };
-            string fail = pildid[tt];
-            pBox.Image = Image.FromFile(@"..\..\..\" + fail);
-            tt++;
-            if (tt == 3) { tt = 0; }
+            string[] pildid = { "esimene.jpg", "teine.png", "kolmas.jpg" };
+            pictureIndex = (pictureIndex + 1) % pildid.Length;
+            pBox.Image = Image.FromFile(@"..\..\..\" + pildid[pictureIndex]);
         }
         private void Btn_Click(object? sender, EventArgs e)
         {
@@ -81,6 +92,29 @@ namespace WinFormsApp2
         {
             lbl.Font = new Font("Arial", 30, FontStyle.Underline);
         }
+        private void Chk_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (chk1.Checked && chk2.Checked)
+            {
+                lbl.BorderStyle = BorderStyle.Fixed3D;
+                pBox.BorderStyle = BorderStyle.Fixed3D;
+            }
+            else if (chk1.Checked)
+            {
+                lbl.BorderStyle = BorderStyle.Fixed3D;
+                pBox.BorderStyle = BorderStyle.None;
+            }
+            else if (chk2.Checked)
+            {
+                pBox.BorderStyle = BorderStyle.Fixed3D;
+                lbl.BorderStyle = BorderStyle.None;
+            }
+            else
+            {
+                lbl.BorderStyle = BorderStyle.None;
+                pBox.BorderStyle = BorderStyle.None;
+            }
+        }
         private void Tree_AfterSelect(object? sender, TreeViewEventArgs e)
         {
             if (e.Node.Text == "Nupp")
@@ -95,10 +129,10 @@ namespace WinFormsApp2
             {
                 Controls.Add(pBox);
             }
-            else if ( e.Node.Text == "Märkiruut")
+            else if ( e.Node.Text == "Markiruut")
             {
-                chk = new CheckBox();
-
+                Controls.Add(chk1);
+                Controls.Add(chk2);
             }
         }
     }
