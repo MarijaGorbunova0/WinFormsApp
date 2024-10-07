@@ -64,7 +64,7 @@ namespace WinFormsApp2
 
             pBox = new PictureBox();
             pBox.Size = new Size(200, 200);
-            pBox.Location = new Point(200, 150);
+            pBox.Location = new Point(150, 150);
             pBox.SizeMode = PictureBoxSizeMode.Zoom;
             pBox.Image = Image.FromFile(@"..\..\..\esimene.jpg");
             pBox.DoubleClick += Pbox_DoubleClick;
@@ -125,40 +125,66 @@ namespace WinFormsApp2
                 pBox.BorderStyle = BorderStyle.None;
             }
         }
-        private void Lb_SelectedIndexChanged(object? sender, EventArgs e) {
-            switch (lb.SelectedIndex) {
-                case 0: tree.BackColor = Color.Red; break;
-                case 1: tree.BackColor = Color.Green; break;
-                case 2: tree.BackColor = Color.Blue; break;
-
-            }   
-        }
+ 
         //private void Txt_textChanged(object? sender, EventArgs e) {
         //    lbl.Text = txt.Text;
         //}
-        private void Lb_changeColor(object? sender, EventArgs e)
+        private void Lb_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //if (lb.CheckedItems )
+            if (lb.SelectedIndex != -1)
+            {
+                switch (lb.SelectedItem.ToString())
+                {
+                    case "uks":
+                        tree.BackColor = Color.LightBlue;   
+                        break;
+                    case "kaks":
+                        tree.BackColor = Color.LightGreen;  
+                        break;
+                    case "kolm":
+                        tree.BackColor = Color.LightCoral; 
+                        break;
+                }
+            }
         }
-        private void Dg_RowHeaderMouseClick(object? sender,DataGridViewCellMouseEventArgs e )
+            private void Dg_RowHeaderMouseClick(object? sender,DataGridViewCellMouseEventArgs e )
         {
             lbl.Text = dg.Rows[e.RowIndex].Cells[0].Value.ToString() + "hind" + dg.Rows[e.RowIndex].Cells[1].Value.ToString();
 
         }
+        private void Dg_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dg.Rows[e.RowIndex];
+                lbl.Text = row.Cells["name"].Value.ToString();
+            }
+        }
         private void AddItemsXml(object? sender, EventArgs e)
         {
+            ds = new DataSet();
+            ds.ReadXml(@"..\..\..\menu.xml");
+           
             DataRow newROW = ds.Tables["food"].NewRow();
             newROW["name"] = Interaction.InputBox("name");
             newROW["price"] = Interaction.InputBox("price");
             newROW["description"] = Interaction.InputBox("description");
             newROW["calories"] = Interaction.InputBox("calories");
+
             ds.Tables["food"].Rows.Add(newROW);
-            ds.WriteXml(@"..\..\..\menu.xml");
-            MessageBox.Show("yayyy");
-
-
-
+            try
+            {
+                ds.WriteXml(@"..\..\..\menu.xml");
+                MessageBox.Show("andmed on edukalt tabelis");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"problem {ex.Message}");
+            }
         }
+
+
+    
         private void Tree_AfterSelect(object? sender, TreeViewEventArgs e)
         {
             if (e.Node.Text == "Nupp")
@@ -184,18 +210,19 @@ namespace WinFormsApp2
                 lb.Items.Add("uks");
                 lb.Items.Add("kaks");
                 lb.Items.Add("kolm");
-                lb.Location = new Point(300, 300);
+                lb.Location = new Point(450, 300);
                 Controls.Add(lb);
+                lb.SelectedIndexChanged += Lb_SelectedIndexChanged;
             }
             else if (e.Node.Text == "tabel")
             {
                 ds = new DataSet("XML fail");
                 ds.ReadXml(@"..\..\..\menu.xml");
                 dg = new DataGridView();
-                dg.Location = new Point(150, lbl.Height + btn.Height + pBox.Height + lb.Height);
+                dg.Location = new Point(150, 400);
                 dg.DataSource = ds;
                 dg.DataMember = "food";
-                //dg.RowHeaderMouseClick += Dg_RowHeaderMouseClick();
+                dg.CellClick += Dg_CellClick; 
                 Controls.Add(dg);
 
             }
@@ -206,7 +233,7 @@ namespace WinFormsApp2
                 var vastus = MessageBox.Show("Sisesatme andmes", "kas tahad input button kustutada?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (vastus == DialogResult.Yes)
                 {
-                  
+                    AddItemsXml(sender, e);
                 }   
             }
         }  
