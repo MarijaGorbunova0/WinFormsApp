@@ -26,6 +26,7 @@ namespace WinFormsApp2
         DataGridView dg;
         DataSet ds;
         TextBox txt;
+        CheckBox chkVorm1, chkVorm2, chkVorm3;
         public StartVorm()
         {
             this.Height = 500;
@@ -42,6 +43,7 @@ namespace WinFormsApp2
             tn.Nodes.Add(new TreeNode("tabel"));
             tn.Nodes.Add(new TreeNode("Loetelu"));
             tn.Nodes.Add(new TreeNode("Dialoogi"));
+            tn.Nodes.Add(new TreeNode("Vormid"));
 
             //tn.Nodes.Add(new TreeNode(Silt));
 
@@ -55,7 +57,7 @@ namespace WinFormsApp2
             btn.Location = new Point(150, 50);
             btn.Click += Btn_Click;
             // silt - label
-            
+
             lbl = new Label();
             lbl.Text = "Alande";
             lbl.Font = new Font("Arial", 30, FontStyle.Underline);
@@ -79,9 +81,24 @@ namespace WinFormsApp2
             chk2.Text = "teine vaade";
             chk2.Location = new Point(450, 230);
             chk2.CheckedChanged += Chk_CheckedChanged;
+
+            chkVorm1 = new CheckBox();
+            chkVorm1.Text = "picture viewer";
+            chkVorm1.Location = new Point(450, 300);
+            chkVorm1.CheckedChanged += OpenVorm;
+
+            chkVorm2 = new CheckBox();
+            chkVorm2.Text = "math quiz";
+            chkVorm2.Location = new Point(450, 330);    
+            chkVorm2.CheckedChanged += OpenVorm;
+
+            chkVorm3 = new CheckBox();
+            chkVorm3.Text = "vorm3";
+            chkVorm3.Location = new Point(450, 360);
+            chkVorm3.CheckedChanged += OpenVorm;
         }
         int t = 0;
-            
+
         private void Pbox_DoubleClick(object? sender, EventArgs e)
         {
             string[] pildid = { "esimene.jpg", "teine.png", "kolmas.jpg" };
@@ -97,6 +114,8 @@ namespace WinFormsApp2
                 btn.BackColor = Color.Red;
 
             }
+            Form2 form2 = new Form2(400,300);
+            form2.Show();
         }
         private void Lbl_MouseHover(object? sender, MouseEventArgs e)
         {
@@ -125,7 +144,7 @@ namespace WinFormsApp2
                 pBox.BorderStyle = BorderStyle.None;
             }
         }
- 
+
         //private void Txt_textChanged(object? sender, EventArgs e) {
         //    lbl.Text = txt.Text;
         //}
@@ -136,18 +155,18 @@ namespace WinFormsApp2
                 switch (lb.SelectedItem.ToString())
                 {
                     case "uks":
-                        tree.BackColor = Color.LightBlue;   
+                        tree.BackColor = Color.LightBlue;
                         break;
                     case "kaks":
-                        tree.BackColor = Color.LightGreen;  
+                        tree.BackColor = Color.LightGreen;
                         break;
                     case "kolm":
-                        tree.BackColor = Color.LightCoral; 
+                        tree.BackColor = Color.LightCoral;
                         break;
                 }
             }
         }
-            private void Dg_RowHeaderMouseClick(object? sender,DataGridViewCellMouseEventArgs e )
+        private void Dg_RowHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
             lbl.Text = dg.Rows[e.RowIndex].Cells[0].Value.ToString() + "hind" + dg.Rows[e.RowIndex].Cells[1].Value.ToString();
 
@@ -164,7 +183,7 @@ namespace WinFormsApp2
         {
             ds = new DataSet();
             ds.ReadXml(@"..\..\..\menu.xml");
-           
+
             DataRow newROW = ds.Tables["food"].NewRow();
             newROW["name"] = Interaction.InputBox("name");
             newROW["price"] = Interaction.InputBox("price");
@@ -182,9 +201,32 @@ namespace WinFormsApp2
                 MessageBox.Show($"problem {ex.Message}");
             }
         }
+        private void OpenVorm(object? sender, EventArgs e)
+        {
+            Form2 form2 = new Form2(400, 300);
+            Form3 form3 = new Form3(500, 300);
+            Form4 form4 = new Form4(500, 300);
+            if (chkVorm1.Checked)
+            {
+               form2.Show();
+               form3.Hide();
+               form4.Hide();
+            }
+            if (chkVorm2.Checked)
+            {
+                form3.Show();
+                form2.Hide();
+                form4.Hide();
+            }
+            if (chkVorm3.Checked)
+            {
+                form4.Show();
+                form3.Hide();
+                form2.Hide();
+            }
+        }
 
 
-    
         private void Tree_AfterSelect(object? sender, TreeViewEventArgs e)
         {
             if (e.Node.Text == "Nupp")
@@ -222,20 +264,27 @@ namespace WinFormsApp2
                 dg.Location = new Point(150, 400);
                 dg.DataSource = ds;
                 dg.DataMember = "food";
-                dg.CellClick += Dg_CellClick; 
+                dg.CellClick += Dg_CellClick;
                 Controls.Add(dg);
 
             }
             else if (e.Node.Text == "Dialoogi")
             {
-                
+
                 MessageBox.Show("Dialoog", "see on lihtne aken");
                 var vastus = MessageBox.Show("Sisesatme andmes", "kas tahad input button kustutada?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (vastus == DialogResult.Yes)
                 {
                     AddItemsXml(sender, e);
-                }   
+                }
             }
-        }  
+            else if (e.Node.Text == "Vormid")
+            {
+                Controls.Add(chkVorm1);
+                Controls.Add(chkVorm2);
+                Controls.Add(chkVorm3);
+
+            }
+        }
     }
 }
