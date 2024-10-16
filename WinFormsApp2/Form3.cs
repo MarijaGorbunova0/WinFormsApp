@@ -202,6 +202,10 @@ namespace WinFormsApp2
 
                 timeLeft = timeLeft - 1;
                 timeLabel.Text = timeLeft + " seconds";
+                if (timeLeft < 6)
+                {
+                    timeLabel.BackColor = Color.Red;
+                }
             }
             else
             {
@@ -214,6 +218,16 @@ namespace WinFormsApp2
                 product.Value = multiplicand * multiplier;
                 quotient.Value = dividend / divisor;
                 startButton.Enabled = true;
+            }
+        }
+        private void answer_Enter(object sender, EventArgs e)
+        {
+            NumericUpDown answerBox = sender as NumericUpDown;
+
+            if (answerBox != null)
+            {
+                int lengthOfAnswer = answerBox.Value.ToString().Length;
+                answerBox.Select(0, lengthOfAnswer);
             }
         }
     }

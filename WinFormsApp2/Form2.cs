@@ -1,6 +1,7 @@
 ﻿using static System.Windows.Forms.VisualStyles.VisualStyleElement.Taskbar;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-
+using System.Drawing;
+using System.Drawing.Imaging;
 namespace WinFormsApp2
 {
     public partial class Form2 : Form
@@ -12,6 +13,8 @@ namespace WinFormsApp2
         OpenFileDialog openFileDialog1;
         CheckBox checkBox1;
         FlowLayoutPanel flowLayoutPanel;
+        Button borderBTN;
+        Panel picturePanel;
         public Form2(int w, int h)
         {
 
@@ -26,7 +29,7 @@ namespace WinFormsApp2
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 85));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 90F));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
-            
+
 
             flowLayoutPanel = new FlowLayoutPanel();
             flowLayoutPanel.Dock = DockStyle.Fill;
@@ -36,7 +39,7 @@ namespace WinFormsApp2
             checkBox1 = new CheckBox();
             checkBox1.Text = "Stretch";
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
-         
+
 
             pictureBox1 = new PictureBox();
             pictureBox1.Dock = DockStyle.Fill;
@@ -48,7 +51,7 @@ namespace WinFormsApp2
             btn_bkg.Width = 50;
             btn_bkg.Location = new Point(150, 50);
             btn_bkg.Click += new EventHandler(backgroundButton_Click);
-            
+
             btn_Simage = new Button();
             btn_Simage.Text = "image";
             btn_Simage.Height = 20;
@@ -95,10 +98,32 @@ namespace WinFormsApp2
             checkBox1 = new CheckBox();
             checkBox1.Text = "Stretch";
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+
+            borderBTN = new Button();
+            borderBTN.Text = "Border";
+            borderBTN.Height = 20;
+            borderBTN.Width = 50;
+            borderBTN.Location = new Point(150, 50);
+            borderBTN.Click += AddBorder;
+
+            picturePanel = new Panel();
+            picturePanel.Dock = DockStyle.Fill;
+            picturePanel.Padding = new Padding(5); 
+
+            pictureBox1 = new PictureBox();
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.BorderStyle = BorderStyle.None; 
+
+            picturePanel.Controls.Add(pictureBox1);
+            tableLayoutPanel.Controls.Add(picturePanel, 0, 0);
+            tableLayoutPanel.SetColumnSpan(picturePanel, 2);
+
+            Controls.Add(tableLayoutPanel);
+            tableLayoutPanel.Controls.Add(borderBTN, 1, 1);
         }
         private void backgroundButton_Click(object sender, EventArgs e)
         {
-                if (colorDialog1.ShowDialog() == DialogResult.OK)
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
                 pictureBox1.BackColor = colorDialog1.Color;
         }
         private void ShowImage(object sender, EventArgs e)
@@ -122,6 +147,17 @@ namespace WinFormsApp2
         private void closeButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+        private void AddBorder(object sender, EventArgs e )    
+        {
+            if (pictureBox1.Image != null)
+            {
+                picturePanel.BackColor = Color.Red;
+            }
+            else
+            {
+                MessageBox.Show("teil ei ole pildi");
+            }
         }
     }
 }

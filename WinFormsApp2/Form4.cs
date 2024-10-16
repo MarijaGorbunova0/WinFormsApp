@@ -12,8 +12,13 @@ namespace WinFormsApp2
         Label secondClicked = null;
         Timer timer = new Timer();
         TextBox txb;
-        Label labelscore;
+        Label timeLabel;
         int score = 0;
+        Timer timer2 = new Timer();
+        int timeLeft;
+        FlowLayoutPanel flowLayoutPanel;
+        Button startButton;
+        int pairs = 0;
 
         List<string> icons = new List<string>()
             {
@@ -21,12 +26,17 @@ namespace WinFormsApp2
             "b", "b", "v", "v", "w", "w", "z", "z"
             };
 
+
         public Form4(int w, int h)
         {
-            this.Width = w;
-            this.Height = h;
+            Width = w;
+            Height = h;
 
-            
+            flowLayoutPanel = new FlowLayoutPanel();
+            flowLayoutPanel.Dock = DockStyle.Top;
+            flowLayoutPanel.FlowDirection = FlowDirection.RightToLeft;
+            flowLayoutPanel.Size = new Size(200, 30);
+
             tableLayoutPanel = new TableLayoutPanel();
             tableLayoutPanel.BackColor = Color.CornflowerBlue;
             tableLayoutPanel.Dock = DockStyle.Fill;
@@ -37,23 +47,33 @@ namespace WinFormsApp2
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
-            
 
+
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 30));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
-            Controls.Add(tableLayoutPanel);
+
+            Controls.Add(flowLayoutPanel);
+            
+            
 
             timer.Interval = 750;
             timer.Tick += new EventHandler(timer1_Tick);
+
+            timer2.Interval = 1000;
+            timer2.Tick += new EventHandler(timer2_Tick);
+
+            timeLabel = new Label();
+            timeLabel.AutoSize = false;
+            timeLabel.BorderStyle = BorderStyle.FixedSingle;
+            timeLabel.Width = 200;
+            timeLabel.Height = 30;
+            timeLabel.Font = new Font(timeLabel.Font.FontFamily, 15.75f);
+            timeLabel.TextAlign = ContentAlignment.MiddleCenter; 
+            timeLabel.Text = "30 seconds";
             
-            Label labelscore = new Label();
-            labelscore.Text = score.ToString();
-            labelscore.Location = new Point(300, 100);
-            Controls.Add(labelscore);
-            //нужно вывести счет попыток
-            
+            flowLayoutPanel.Controls.Add(timeLabel);
 
             for (int i = 0; i < 16; i++)
             {
@@ -61,10 +81,18 @@ namespace WinFormsApp2
                 kvadrati(label, 0, i);
                
             }
+            Controls.Add(tableLayoutPanel);
+            
 
-            AssignIconsToSquares();
-
-
+            startButton = new Button();
+            startButton.Name = "startButton";
+            startButton.Text = "Start";
+            startButton.AutoSize = true;
+            startButton.Font = new System.Drawing.Font("Arial", 14);
+            startButton.TabIndex = 0;
+            startButton.Location = new System.Drawing.Point((this.Width - startButton.Width) / 2, 380);
+            startButton.Click += new EventHandler(StartButton_Click);
+            flowLayoutPanel.Controls.Add(startButton);
         }
         private void kvadrati(Label label1, int row, int column)
         {
@@ -83,19 +111,19 @@ namespace WinFormsApp2
         }
         private void AssignIconsToSquares()
         {
-      
+            List<string> iconCopy = new List<string>(icons); 
             foreach (Control control in tableLayoutPanel.Controls)
             {
-                Label iconLabel = control as Label;
-                if (iconLabel != null)
+                if (control is Label iconLabel)
                 {
-                    int randomNumber = random.Next(icons.Count);
-                    iconLabel.Text = icons[randomNumber];
+                    int randomNumber = random.Next(iconCopy.Count);
+                    iconLabel.Text = iconCopy[randomNumber];
                     iconLabel.ForeColor = iconLabel.BackColor;
-                    icons.RemoveAt(randomNumber);
+                    iconCopy.RemoveAt(randomNumber); 
                 }
             }
         }
+
         private void label1_Click(object sender, EventArgs e)
         {
   
@@ -125,13 +153,14 @@ namespace WinFormsApp2
 
                     firstClicked = null;
                     secondClicked = null;
+                    pairs++;
                     return;
                 }
                 else
                 {
                     firstClicked.ForeColor = Color.Red;
                     secondClicked.ForeColor = Color.Red;
-                    score++;
+
                 }
                 timer.Start();
 
@@ -155,18 +184,36 @@ namespace WinFormsApp2
         }
         private void CheckForWinner()
         {
-            foreach (Control control in tableLayoutPanel.Controls)
+            if (pairs == 8) 
             {
-                Label iconLabel = control as Label;
-
-                if (iconLabel != null)
-                {
-                    if (iconLabel.ForeColor == iconLabel.BackColor)
-                        return;
-                }
+                MessageBox.Show("You matched all the icons!", "Congratulations");
+                Close();
             }
-            MessageBox.Show("You matched all the icons!", "Congratulations");
-            Close();
+        }
+
+        private void StartButton_Click(object sender, EventArgs e)
+        {
+            timeLeft = 30;
+            timeLabel.Text = $"{timeLeft} seconds";
+            timer2.Start();
+            pairs = 0;
+            AssignIconsToSquares();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if (timeLeft > 0)
+            {
+                timeLeft--; 
+                timeLabel.Text = $"{timeLeft} seconds";
+            }
+            else
+            {
+                timer2.Stop();
+                AssignIconsToSquares(); 
+                MessageBox.Show("Time's up! The icons have been shuffled.");
+                pairs = 0; 
+            }
         }
     }
 }
