@@ -34,6 +34,8 @@ namespace WinFormsApp2
         int timeLeft;
         Timer timer1 = new Timer();
         Label timeLabel;
+        int player1Score, player2Score;
+        bool isPlayer1Turn = true;
         public Form3(int w, int h)
         {
             this.Width = w;
@@ -143,10 +145,8 @@ namespace WinFormsApp2
 
             addend1 = randomizer.Next(51);
             addend2 = randomizer.Next(51);
-
             plusLeftLabel.Text = addend1.ToString();
             plusRightLabel.Text = addend2.ToString();
-
             sum.Value = 0;
 
             minuend = randomizer.Next(1, 101);
@@ -168,7 +168,7 @@ namespace WinFormsApp2
             dividedRightLabel.Text = divisor.ToString();
             quotient.Value = 0;
 
-            timeLeft = 30;
+            timeLeft = 100;
             timeLabel.Text = "30 seconds";
             timer1.Start();
         }
@@ -191,33 +191,44 @@ namespace WinFormsApp2
         {
             if (CheckTheAnswer())
             {
-
                 timer1.Stop();
-                MessageBox.Show("You got all the answers right!",
-                                "Congratulations!");
-                startButton.Enabled = true;
+                MessageBox.Show("You got all the answers right!", "Congratulations!");
+
+                if (isPlayer1Turn)
+                {
+                    player1Score = timeLeft;  
+                    isPlayer1Turn = false;    
+                    StartTheQuiz();
+                }
+                else
+                {
+                    player2Score = timeLeft;
+                    ShowWinner();
+                    startButton.Enabled = true;
+                }
             }
             else if (timeLeft > 0)
             {
-
-                timeLeft = timeLeft - 1;
+                timeLeft -= 1;
                 timeLabel.Text = timeLeft + " seconds";
-                if (timeLeft < 6)
-                {
-                    timeLabel.BackColor = Color.Red;
-                }
             }
             else
             {
-       
                 timer1.Stop();
-                timeLabel.Text = "Time's up!";
-                MessageBox.Show("You didn't finish in time.", "Sorry!");
-                sum.Value = addend1 + addend2;
-                difference.Value = minuend - subtrahend;
-                product.Value = multiplicand * multiplier;
-                quotient.Value = dividend / divisor;
-                startButton.Enabled = true;
+                MessageBox.Show("Time's up!", "Sorry!");
+
+                if (isPlayer1Turn)
+                {
+                    player1Score = 0;  
+                    isPlayer1Turn = false;
+                    StartTheQuiz();
+                }
+                else
+                {
+                    player2Score = 0;
+                    ShowWinner();
+                    startButton.Enabled = true;
+                }
             }
         }
         private void answer_Enter(object sender, EventArgs e)
@@ -228,6 +239,21 @@ namespace WinFormsApp2
             {
                 int lengthOfAnswer = answerBox.Value.ToString().Length;
                 answerBox.Select(0, lengthOfAnswer);
+            }
+        }
+        private void ShowWinner()
+        {
+            if (player1Score > player2Score)
+            {
+                MessageBox.Show("Player 1 wins!", "Result");
+            }
+            else if (player1Score < player2Score)
+            {
+                MessageBox.Show("Player 2 wins!", "Result");
+            }
+            else
+            {
+                MessageBox.Show("It's a tie!", "Result");
             }
         }
     }
