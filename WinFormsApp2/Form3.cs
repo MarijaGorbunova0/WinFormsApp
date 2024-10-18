@@ -168,7 +168,7 @@ namespace WinFormsApp2
             dividedRightLabel.Text = divisor.ToString();
             quotient.Value = 0;
 
-            timeLeft = 100;
+            timeLeft = 20;
             timeLabel.Text = "30 seconds";
             timer1.Start();
         }
@@ -211,6 +211,11 @@ namespace WinFormsApp2
             {
                 timeLeft -= 1;
                 timeLabel.Text = timeLeft + " seconds";
+                timeLabel.BackColor = Color.White;
+                if (timeLeft < 6)
+                {
+                    timeLabel.BackColor = Color.Red;
+                }
             }
             else
             {

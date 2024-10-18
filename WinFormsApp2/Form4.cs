@@ -193,7 +193,7 @@ namespace WinFormsApp2
 
         private void StartButton_Click(object sender, EventArgs e)
         {
-            timeLeft = 30;
+            timeLeft = 10;
             timeLabel.Text = $"{timeLeft} seconds";
             timer2.Start();
             pairs = 0;
