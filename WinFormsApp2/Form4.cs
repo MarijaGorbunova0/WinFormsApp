@@ -209,9 +209,14 @@ namespace WinFormsApp2
             }
             else
             {
-                timer2.Stop();
-                AssignIconsToSquares(); 
-                MessageBox.Show("Time's up! The icons have been shuffled.");
+                timeLeft = 10;
+
+                if (pairs == 0)
+                {
+                    AssignIconsToSquares(); 
+                    MessageBox.Show("Time's up! The icons have been shuffled.");
+                }
+
                 pairs = 0; 
             }
         }

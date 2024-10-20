@@ -187,8 +187,25 @@ namespace WinFormsApp2
             else
                 return false;
         }
+        private void CheckAnswer(NumericUpDown answerBox, int correctAnswer)
+        {
+            if (answerBox.Value == correctAnswer)
+            {
+                answerBox.BackColor = Color.Green;  
+            }
+            else
+            {
+                answerBox.BackColor = Color.Red;    
+            }
+        }
+
+
         private void timer1_Tick(object sender, EventArgs e)
         {
+            CheckAnswer(sum, addend1 + addend2);        
+            CheckAnswer(difference, minuend - subtrahend); 
+            CheckAnswer(product, multiplicand * multiplier); 
+            CheckAnswer(quotient, dividend / divisor);
             if (CheckTheAnswer())
             {
                 timer1.Stop();

@@ -14,10 +14,10 @@ namespace WinFormsApp2
         OpenFileDialog openFileDialog1;
         CheckBox checkBox1;
         FlowLayoutPanel flowLayoutPanel;
-        Button borderBTN;
+        Button borderBTN, rotateBTN, blackFilterBTN, invertBTN;
         Panel picturePanel;
         Graphics graphics;
-        Button drowBTN;
+     
         public Form2(int w, int h)
         {
 
@@ -51,45 +51,57 @@ namespace WinFormsApp2
 
             btn_bkg = new Button();
             btn_bkg.Text = "color";
-            btn_bkg.Height = 20;
+            btn_bkg.Height = 30;
             btn_bkg.Width = 50;
             btn_bkg.Location = new Point(150, 50);
             btn_bkg.Click += new EventHandler(backgroundButton_Click);
 
             btn_Simage = new Button();
             btn_Simage.Text = "image";
-            btn_Simage.Height = 20;
+            btn_Simage.Height = 30;
             btn_Simage.Width = 50;
             btn_Simage.Location = new Point(150, 70);
             btn_Simage.Click += ShowImage;
 
             btn_Close = new Button();
             btn_Close.Text = "close";
-            btn_Close.Height = 20;
+            btn_Close.Height = 30;
             btn_Close.Width = 50;
-            btn_Close.Location = new Point(150, 50);
             btn_Close.Click += closeButton_Click;
 
             btn_Clear = new Button();
             btn_Clear.Text = "clear";
-            btn_Clear.Height = 20;
+            btn_Clear.Height = 30;
             btn_Clear.Width = 50;
             btn_Clear.Location = new Point(150, 50);
             btn_Clear.Click += clearButton_Click;
 
             borderBTN = new Button();
             borderBTN.Text = "Border";
-            borderBTN.Height = 20;
+            borderBTN.Height = 30;
             borderBTN.Width = 50;
             borderBTN.Location = new Point(150, 50);
-            borderBTN.Click += Drow;
+            borderBTN.Click += AddBorder;
 
-            drowBTN = new Button();
-            drowBTN.Text = "Drow";
-            drowBTN.Height = 20;
-            drowBTN.Width = 50;
-            drowBTN.Location = new Point(150, 50);
-            drowBTN.Click += AddBorder;
+            rotateBTN = new Button();
+            rotateBTN.Text = "rotate";
+            rotateBTN.Height = 30;
+            rotateBTN.Width = 50;
+            rotateBTN.Location = new Point(150, 50);
+            rotateBTN.Click += rotateImage;
+
+            blackFilterBTN = new Button();
+            blackFilterBTN.Text = "Black filter";
+            blackFilterBTN.Height = 30;
+            blackFilterBTN.Width = 50;
+            blackFilterBTN.Click += ConvertToBlack;
+
+            invertBTN = new Button();
+            invertBTN.Text = "Invert";
+            invertBTN.Height = 30;
+            invertBTN.Width = 50;
+            invertBTN.Location = new Point(150, 50);
+            invertBTN.Click += invertColors;
 
             openFileDialog1 = new OpenFileDialog();
             openFileDialog1.Filter = "JPEG Files (*.jpg)|*.jpg|PNG Files (*.png)|*.png|BMP Files (*.bmp)|*.bmp|All files (*.*)|*.*";
@@ -97,7 +109,7 @@ namespace WinFormsApp2
 
             colorDialog1 = new ColorDialog();
 
-       
+
             Controls.Add(tableLayoutPanel);
 
             flowLayoutPanel.Controls.Add(btn_Simage);
@@ -105,6 +117,9 @@ namespace WinFormsApp2
             flowLayoutPanel.Controls.Add(btn_Close);
             flowLayoutPanel.Controls.Add(btn_Clear);
             flowLayoutPanel.Controls.Add(borderBTN);
+            flowLayoutPanel.Controls.Add(rotateBTN);
+            flowLayoutPanel.Controls.Add(blackFilterBTN);
+            flowLayoutPanel.Controls.Add(invertBTN);
 
             tableLayoutPanel.Controls.Add(pictureBox1, 0, 0);
             tableLayoutPanel.SetColumnSpan(pictureBox1, 2);
@@ -112,11 +127,9 @@ namespace WinFormsApp2
             tableLayoutPanel.Controls.Add(flowLayoutPanel, 1, 1);
 
 
-   
-
             picturePanel = new Panel();
             picturePanel.Dock = DockStyle.Fill;
-            picturePanel.Padding = new Padding(5); 
+            picturePanel.Padding = new Padding(5);
 
             pictureBox1 = new PictureBox();
             pictureBox1.Dock = DockStyle.Fill;
@@ -126,7 +139,7 @@ namespace WinFormsApp2
             tableLayoutPanel.SetColumnSpan(picturePanel, 2);
 
             Controls.Add(tableLayoutPanel);
-           
+
         }
         private void backgroundButton_Click(object sender, EventArgs e)
         {
@@ -155,7 +168,7 @@ namespace WinFormsApp2
         {
             this.Close();
         }
-        private void AddBorder(object sender, EventArgs e )    
+        private void AddBorder(object sender, EventArgs e)
         {
             if (pictureBox1.Image != null)
             {
@@ -166,19 +179,53 @@ namespace WinFormsApp2
                 MessageBox.Show("teil ei ole pildi");
             }
         }
-        private void Drow()
+        private void rotateImage(object sender, EventArgs e)
         {
-            if (pictureBox1 == null)
-                return;
-
-            Graphics.DrawImage(
-                pictureBox1,
-                picturePanel.AutoScrollPosition.X,
-                picturePanel.AutoScrollPosition.Y,
-                pictureBox1.Size.Width,
-                pictureBox1.Size.Height
-            );
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                pictureBox1.Refresh();
+            }
         }
-            
+        private void ConvertToBlack(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image != null)
+            {
+                Bitmap original = new Bitmap(pictureBox1.Image); 
+                Bitmap bwImage = new Bitmap(original.Width, original.Height);
+
+                for (int y = 0; y < original.Height; y++)
+                {
+                    for (int x = 0; x < original.Width; x++)
+                    {
+                        Color pixelColor = original.GetPixel(x, y);
+                        int grayScale = (int)((pixelColor.R * 0.3) + (pixelColor.G * 0.59) + (pixelColor.B * 0.11));
+                        Color grayColor = Color.FromArgb(grayScale, grayScale, grayScale);
+
+                        bwImage.SetPixel(x, y, grayColor);
+                    }
+                }
+                pictureBox1.Image = bwImage;
+                pictureBox1.Refresh();
+            }
+        }
+        private void invertColors(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image != null)
+            {
+                Bitmap original = new Bitmap(pictureBox1.Image);
+
+                for (int y = 0; y < original.Height; y++)
+                {
+                    for (int x = 0; x < original.Width; x++)
+                    {
+                        Color pixelColor = original.GetPixel(x, y);
+                        Color invertedColor = Color.FromArgb(255 - pixelColor.R, 255 - pixelColor.G, 255 - pixelColor.B);
+                        original.SetPixel(x, y, invertedColor);
+                    }
+                }
+                pictureBox1.Image = original;
+            }
+        }
     }
 }
