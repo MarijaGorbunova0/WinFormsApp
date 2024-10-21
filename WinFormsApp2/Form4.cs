@@ -1,4 +1,4 @@
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
 namespace WinFormsApp2
@@ -19,12 +19,12 @@ namespace WinFormsApp2
         FlowLayoutPanel flowLayoutPanel;
         Button startButton;
         int pairs = 0;
+        ComboBox colorComboBox;
+        ComboBox iconComboBox;
+        List<string> defaultIcons = new List<string>() { "!", "!", "N", "N", ",", ",", "k", "k", "b", "b", "v", "v", "w", "w", "z", "z" };
+        List<string> alternativeIcons = new List<string>() {"A", "A", "B", "B", "C", "C", "D", "D","E", "E", "F", "F", "G", "G", "H", "H" };
 
-        List<string> icons = new List<string>()
-            {
-            "!", "!", "N", "N", ",", ",", "k", "k",
-            "b", "b", "v", "v", "w", "w", "z", "z"
-            };
+        List<string> icons;
 
 
         public Form4(int w, int h)
@@ -72,7 +72,28 @@ namespace WinFormsApp2
             timeLabel.Font = new Font(timeLabel.Font.FontFamily, 15.75f);
             timeLabel.TextAlign = ContentAlignment.MiddleCenter; 
             timeLabel.Text = "30 seconds";
-            
+
+            colorComboBox = new ComboBox();
+            colorComboBox.Name = "colorComboBox";
+            colorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            colorComboBox.Location = new Point(10, 10);
+            colorComboBox.Width = 200;
+            colorComboBox.Items.AddRange(new string[] { "punane", "roheline", "sinine", "kollane", "valge" });
+            colorComboBox.SelectedIndexChanged += Change_Colors;
+
+            iconComboBox = new ComboBox();
+            iconComboBox.Name = "iconComboBox";
+            iconComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            iconComboBox.Location = new Point(120, 10);
+            iconComboBox.Width = 100;
+            iconComboBox.Text = "ikonki";
+            iconComboBox.Items.AddRange(new string[] { "tavaliset", "teised" });
+            iconComboBox.SelectedIndexChanged += Change_Icons;
+         
+
+
+            flowLayoutPanel.Controls.Add(colorComboBox);
+            flowLayoutPanel.Controls.Add(iconComboBox);
             flowLayoutPanel.Controls.Add(timeLabel);
 
             for (int i = 0; i < 16; i++)
@@ -141,7 +162,7 @@ namespace WinFormsApp2
                 {
                     firstClicked = clickedLabel;
                     firstClicked.ForeColor = Color.Black;
-                    tableLayoutPanel.BackColor = Color.CornflowerBlue;
+            
                     return;
                 }
 
@@ -220,5 +241,57 @@ namespace WinFormsApp2
                 pairs = 0; 
             }
         }
+        private void Change_Colors(object sender, EventArgs e)
+        {
+            Color selectedColor;
+
+            switch (colorComboBox.SelectedItem.ToString())
+            {
+                case "punane":
+                    selectedColor = Color.IndianRed;
+                    break;
+                case "roheline":
+                    selectedColor = Color.MediumSeaGreen;
+                    break;
+                case "sinine":
+                    selectedColor = Color.CornflowerBlue;
+                    break;
+                case "kollane":
+                    selectedColor = Color.LightYellow;
+                    break;
+                case "valge":
+                    selectedColor = Color.White;
+                    break;
+                default:
+                    selectedColor = this.BackColor;
+                    break;
+            }
+
+
+            BackColor = selectedColor;
+            tableLayoutPanel.BackColor = selectedColor;
+
+            foreach (Control control in tableLayoutPanel.Controls)
+            {
+                if (control is Label label)
+                {
+                    label.BackColor = selectedColor;
+                }
+            }
+        }
+        private void Change_Icons(object sender, EventArgs e)
+        {
+            if (iconComboBox.SelectedIndex == 0) // Стандартные
+            {
+                icons = defaultIcons;
+            }
+            else if (iconComboBox.SelectedIndex == 1)
+            {
+                icons = alternativeIcons;
+            }
+
+            AssignIconsToSquares(); 
+        }
+
     }
 }

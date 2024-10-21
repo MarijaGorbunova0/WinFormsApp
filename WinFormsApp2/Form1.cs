@@ -203,9 +203,9 @@ namespace WinFormsApp2
         }
         private void OpenVorm(object? sender, EventArgs e)
         {
-            Form2 form2 = new Form2(500, 400);
+            Form2 form2 = new Form2(600, 400);
             Form3 form3 = new Form3(500, 500);
-            Form4 form4 = new Form4(500, 500);
+            Form4 form4 = new Form4(700, 500);
             if (chkVorm1.Checked)
             {
                form2.Show();

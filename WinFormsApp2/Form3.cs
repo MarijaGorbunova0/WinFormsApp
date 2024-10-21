@@ -36,6 +36,8 @@ namespace WinFormsApp2
         Label timeLabel;
         int player1Score, player2Score;
         bool isPlayer1Turn = true;
+
+        CheckBox darkThemeCB, lightThemeCB;
         public Form3(int w, int h)
         {
             this.Width = w;
@@ -79,6 +81,7 @@ namespace WinFormsApp2
             timer1.Interval = 1000;
             timer1.Tick += new EventHandler(timer1_Tick);
 
+
             timeLabel = new Label();
             timeLabel.AutoSize = false;
             timeLabel.BorderStyle = BorderStyle.FixedSingle;
@@ -86,6 +89,17 @@ namespace WinFormsApp2
             timeLabel.Height = 30;
             timeLabel.Font = new Font(timeLabel.Font.FontFamily, 15.75f);
             timeLabel.Location = new Point(300, 0);
+
+            darkThemeCB = new CheckBox();
+            darkThemeCB.Text = "black theme";
+            darkThemeCB.Location = new Point(10, 10);
+            darkThemeCB.CheckedChanged += Set_theme;
+
+            lightThemeCB = new CheckBox();
+            lightThemeCB.Text = "light theme";
+            lightThemeCB.Location = new Point(150, 10);
+            lightThemeCB.CheckedChanged += Set_theme;
+
 
             Controls.Add(plusLeftLabel);
             Controls.Add(operatorLabel);
@@ -113,6 +127,8 @@ namespace WinFormsApp2
 
             Controls.Add(startButton);
             Controls.Add(timeLabel);
+            Controls.Add(darkThemeCB);
+            Controls.Add(lightThemeCB);
             timer1.Tick += new EventHandler(timer1_Tick);
         }
         private Label CreateLabel(string name, string text, int x, int y)
@@ -121,10 +137,10 @@ namespace WinFormsApp2
             label.Name = name;
             label.Text = text;
             label.AutoSize = false;
-            label.Size = new System.Drawing.Size(60, 50);
-            label.Font = new System.Drawing.Font("Arial", 18);
-            label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            label.Location = new System.Drawing.Point(x, y);
+            label.Size = new Size(60, 50);
+            label.Font = new Font("Arial", 18);
+            label.TextAlign = ContentAlignment.MiddleCenter;
+            label.Location = new Point(x, y);
             return label;
         }
 
@@ -133,9 +149,9 @@ namespace WinFormsApp2
         {
             NumericUpDown numericUpDown = new NumericUpDown();
             numericUpDown.Name = name;
-            numericUpDown.Font = new System.Drawing.Font("Arial", 18);
-            numericUpDown.MaximumSize = new System.Drawing.Size(100, 0);
-            numericUpDown.Location = new System.Drawing.Point(x, y);
+            numericUpDown.Font = new Font("Arial", 18);
+            numericUpDown.MaximumSize = new Size(100, 0);
+            numericUpDown.Location = new Point(x, y);
             numericUpDown.Width = 100;
             numericUpDown.TabIndex = tabIndex;  
             return numericUpDown;
@@ -171,6 +187,9 @@ namespace WinFormsApp2
             timeLeft = 20;
             timeLabel.Text = "30 seconds";
             timer1.Start();
+
+
+
         }
         private void startButton_Click(object sender, EventArgs e)
         {
@@ -278,5 +297,21 @@ namespace WinFormsApp2
                 MessageBox.Show("It's a tie!", "Result");
             }
         }
+        private void Set_theme(object sender, EventArgs e)
+        {
+            if ( darkThemeCB.Checked)
+            {
+                lightThemeCB.Checked = false;  
+                BackColor = Color.Black;
+                ForeColor = Color.White;
+            }
+            else if (lightThemeCB.Checked)
+            {
+                darkThemeCB.Checked = false; 
+                BackColor = Color.White;
+                ForeColor = Color.Black;
+            }
+        }
+
     }
 }
